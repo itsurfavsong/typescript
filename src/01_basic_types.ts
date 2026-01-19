@@ -235,8 +235,9 @@ function test(): void { // 리턴값이 없다는 것을 명시적으로 나타�
 test();
 
 // ----------------------------------------------------------------------------------------------------------------------
-// algebraic data type: (Union, intersection)
+// algebraic data type: (Union, Intersection)
 // Union: 타입의 합집합을 나타내는 타입, `|`을 통해 타입을 구분
+// Intersection: 타입의 교집합을 나타내는 타입, `&`을 통해 타입을 구분
 // 주의 사항? 시점에 따라서 사용 범위가 달라진다. 
 // 1. 할당할 때, `A | B`의 필수 프로퍼티를 모두 가지고 있거나, `A | B`의 모든 프로퍼티를 가지고 있으면 타입 검사 통과 
 // 2. 사용할 때, `A | B`가 공통적으로 가진 프로퍼티만 사용 가능
@@ -283,8 +284,45 @@ test4.name;
 // test4.age; // Error <-사용할 때는 무조건 공통 프로퍼티만 사용할 수 있음. 
 
 // intersection: 타입의 교집합을 나타내는 타입, `&`을 통해 타입을 구분
-// function test5(): string & number { // 리턴값이 string 또는 number 중 하나가 될 수 있다는 것을 나타냄. 
-//   return 1;
-// }
+// 복수의 타입을 조합하는 경우 `&` 타입을 구분
 
+type Human2 = {
+  name: string;
+  lang: string;
+};
+type Dog2 = {
+  name: string;
+  age: number;
+};
+type Animal2 = Human2 & Dog2;
+
+// 할당 시점: 각 타입의 모든 프로퍼티를 가지고 있어야 통과
+const animal2: Animal2 = {
+  name: "elizabeth",
+  lang: "cn",
+  age: 28,
+}; // 모든 프로퍼티가 필요함. 
+
+// 사용 시점: 모든 프로퍼티에 접근 가능
+animal2.age; // 모든 프로퍼티가 가능함
+ 
 // ----------------------------------------------------------------------------------------------------------------------
+// never: 절대 발생하지 않아야 하는, 불가능의 의미를 가진 타입
+// 절대 발생하면 안되는 것에 대해서 미연의 방지? 느낌임, 분기처리할 때 절대로 오류 안나게 해주는 방법. 
+ type color = "red" | "green" | "blue";
+
+ function getFlower(val: color): string {
+   if(val === "red") {
+     return "Rose";
+   } else if(val === "green") {
+     return "Lily";
+   } else if(val === "blue") {
+     return "Bluebell";
+   } else {
+     return checkInfo(val);
+   }
+ }
+
+ function checkInfo(info: never): never {
+   throw new Error(`타입 오류: ${info}`);
+ }
